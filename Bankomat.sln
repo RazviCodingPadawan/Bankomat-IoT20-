@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Bankomat", "Bankomat\Bankomat.pyproj", "{AB69AE1B-0DF2-4C55-AFB5-300EABEC5631}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB69AE1B-0DF2-4C55-AFB5-300EABEC5631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB69AE1B-0DF2-4C55-AFB5-300EABEC5631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D78AF75F-CB96-4B64-A116-2A048D98BF42}
+	EndGlobalSection
+EndGlobal
