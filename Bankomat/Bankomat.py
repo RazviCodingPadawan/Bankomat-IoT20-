@@ -22,7 +22,7 @@ def ManageAccount():
     if selected == 1:
       summa = float(input("Ange belöpp> "))
       while summa > konto[kontonummer_tmp]:
-        summa = float(input("eroare "))
+        summa = float(input("Felmeddelande. Ange annan summa: "))
       konto[kontonummer_tmp] -= summa
 
     if selected == 2:
@@ -53,8 +53,7 @@ while True:
         print(konto)
 
 
-"""   Om redan taget "Felmeddelande"
-      Om belopp > saldo "Felmeddelande"
+"""   
       Meny B (i inloggad läge)
 - kunna lista transaktioner
 - dvs varje uttag och insättning skall sparas i transaktionslogg för aktuellt konto - konton, saldon, transaktioner ska sparas i FIL. Och läsas in vid uppstart av programmet
