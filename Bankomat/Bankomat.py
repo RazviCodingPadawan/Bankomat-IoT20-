@@ -1,6 +1,5 @@
 konto = {}
-
-
+import datetime
 
 def RegisterAccount():
     kontonummer_tmp = int(input("Ange kontonumer>: "))
@@ -27,6 +26,7 @@ def ManageAccount():
 
     if selected == 2:
         konto[kontonummer_tmp] += float(input("Ange belöpp> "))
+        print(datetime.datetime.now())
 
     if selected == 3:
         print("Saldo: " + str(konto[kontonummer_tmp]))
@@ -53,9 +53,9 @@ while True:
         print(konto)
 
 
-"""   
+"""   VG
       Meny B (i inloggad läge)
-- kunna lista transaktioner
-- dvs varje uttag och insättning skall sparas i transaktionslogg för aktuellt konto - konton, saldon, transaktioner ska sparas i FIL. Och läsas in vid uppstart av programmet
-- en transaktion består av datum konto belopp typ (ins/uttag)
+      - kunna lista transaktioner
+      - dvs varje uttag och insättning skall sparas i transaktionslogg för aktuellt konto - konton, saldon, transaktioner ska sparas i FIL. Och läsas in vid uppstart av programmet
+      - en transaktion består av datum konto belopp typ (ins/uttag)
  """
