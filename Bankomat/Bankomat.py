@@ -1,61 +1,143 @@
-konto = {}
+import os
 import datetime
 
-def RegisterAccount():
-    kontonummer_tmp = int(input("Ange kontonumer>: "))
-    while kontonummer_tmp < 1000 or kontonummer_tmp > 9999 or kontonummer_tmp in konto:
-        kontonummer_tmp = int(input("Invalid kontonummer.. Re-enter: "))
-    konto[kontonummer_tmp] = 0
+# Filenames
+ACCOUNTS_FILE = 'accounts.txt'
+TRANSACTIONS_FILE = 'transactions.txt'
 
+# Load accounts and transactions from files
+def load_accounts():
+    accounts = {}
+    if os.path.exists(ACCOUNTS_FILE):
+        with open(ACCOUNTS_FILE, 'r') as f:
+            for line in f:
+                account, balance = line.strip().split(',')
+                accounts[account] = float(balance)
+    return accounts
 
-def ManageAccount():
-    kontonummer_tmp = int(input("Ange kontonumer>: "))
-    while kontonummer_tmp < 1000 or kontonummer_tmp > 9999 or kontonummer_tmp not in konto:
-        kontonummer_tmp = int(input("Invalid kontonummer.. Re-enter: "))
-    print("****KONTOMENY**** - konto:", kontonummer_tmp)
-    print("1. Ta ut pengar")
-    print("2. Sätt in pengar")
-    print("3. Visa saldo")
-    print("4. Avsluta")
-    selected = int(input("Ange menyval> "))
-    if selected == 1:
-      summa = float(input("Ange belöpp> "))
-      while summa > konto[kontonummer_tmp]:
-        summa = float(input("Felmeddelande. Ange annan summa: "))
-      konto[kontonummer_tmp] -= summa
+def load_transactions():
+    transactions = {}
+    if os.path.exists(TRANSACTIONS_FILE):
+        with open(TRANSACTIONS_FILE, 'r') as f:
+            for line in f:
+                date, account, amount, ttype = line.strip().split(',')
+                if account not in transactions:
+                    transactions[account] = []
+                transactions[account].append((date, float(amount), ttype))
+    return transactions
 
-    if selected == 2:
-        konto[kontonummer_tmp] += float(input("Ange belöpp> "))
-        print(datetime.datetime.now())
+# Save accounts and transactions to files
+def save_accounts(accounts):
+    with open(ACCOUNTS_FILE, 'w') as f:
+        for account, balance in accounts.items():
+            f.write(f'{account},{balance}\n')
 
-    if selected == 3:
-        print("Saldo: " + str(konto[kontonummer_tmp]))
+def save_transactions(transactions):
+    with open(TRANSACTIONS_FILE, 'w') as f:
+        for account, t_list in transactions.items():
+            for t in t_list:
+                f.write(f'{t[0]},{account},{t[1]},{t[2]}\n')
 
-    if selected == 4:
-        print("Transaction is now complete.")
-        print("Thanks for choosing us as your bank")
+# Display menus
+def display_menu_a():
+    print("Menu A")
+    print("1. Create account")
+    print("2. Log in to account")
+    print("3. Exit")
 
+def display_menu_b():
+    print("Menu B")
+    print("1. Withdraw money")
+    print("2. Deposit money")
+    print("3. Show balance")
+    print("4. List transactions")
+    print("5. Log out")
 
-while True:
-    print("****HUVUDMENY****")
-    print("1. Skapa konto")
-    print("2. Administrera konto")
-    print("3. Visa alla konton")
-    print("4. Avsluta")
-    selected = int(input("Ange menyval> "))
-    if(selected == 4):
-        break
-    if(selected == 1):
-        RegisterAccount()
-    if(selected == 2):
-        ManageAccount()
-    if(selected == 3):
-        print(konto)
+# Account operations
+def create_account(accounts):
+    account_number = input("Enter account number: ")
+    if account_number in accounts:
+        print("The account number is already taken.")
+    else:
+        accounts[account_number] = 0.0
+        print("Account created.")
+    return accounts
 
+def login(accounts):
+    account_number = input("Enter account number: ")
+    if account_number in accounts:
+        print("Login successful.")
+        return account_number
+    else:
+        print("Account does not exist.")
+        return None
 
-"""   VG
-      Meny B (i inloggad läge)
-      - kunna lista transaktioner
-      - dvs varje uttag och insättning skall sparas i transaktionslogg för aktuellt konto - konton, saldon, transaktioner ska sparas i FIL. Och läsas in vid uppstart av programmet
-      - en transaktion består av datum konto belopp typ (ins/uttag)
- """
+def withdraw(accounts, transactions, account_number):
+    amount = float(input("Enter amount to withdraw: "))
+    if amount > accounts[account_number]:
+        print("Insufficient balance.")
+    else:
+        accounts[account_number] -= amount
+        transactions[account_number].append((datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), amount, 'withdrawal'))
+        print("Withdrawal successful.")
+    return accounts, transactions
+
+def deposit(accounts, transactions, account_number):
+    amount = float(input("Enter amount to deposit: "))
+    accounts[account_number] += amount
+    transactions[account_number].append((datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), amount, 'deposit'))
+    print("Deposit successful.")
+    return accounts, transactions
+
+def show_balance(accounts, account_number):
+    print(f"Current balance: {accounts[account_number]}")
+
+def list_transactions(transactions, account_number):
+    print("Transactions:")
+    for t in transactions[account_number]:
+        print(f"Date: {t[0]}, Amount: {t[1]}, Type: {t[2]}")
+
+# Main program
+def main():
+    accounts = load_accounts()
+    transactions = load_transactions()
+    
+    while True:
+        display_menu_a()
+        choice = input("Choose an option: ")
+        
+        if choice == '1':
+            accounts = create_account(accounts)
+        elif choice == '2':
+            account_number = login(accounts)
+            if account_number:
+                if account_number not in transactions:
+                    transactions[account_number] = []
+                while True:
+                    display_menu_b()
+                    choice_b = input("Choose an option: ")
+                    
+                    if choice_b == '1':
+                        accounts, transactions = withdraw(accounts, transactions, account_number)
+                    elif choice_b == '2':
+                        accounts, transactions = deposit(accounts, transactions, account_number)
+                    elif choice_b == '3':
+                        show_balance(accounts, account_number)
+                    elif choice_b == '4':
+                        list_transactions(transactions, account_number)
+                    elif choice_b == '5':
+                        print("Logging out...")
+                        break
+                    else:
+                        print("Invalid choice.")
+        elif choice == '3':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice.")
+        
+        save_accounts(accounts)
+        save_transactions(transactions)
+
+if __name__ == "__main__":
+    main()
